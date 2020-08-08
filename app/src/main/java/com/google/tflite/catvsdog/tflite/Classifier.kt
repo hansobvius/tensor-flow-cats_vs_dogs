@@ -72,9 +72,13 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
     fun recognizeImage(bitmap: Bitmap): List<Recognition> {
         // resize the bitmap to 224 x 224
         val scaledBitmap = Bitmap.createScaledBitmap(bitmap, inputSize, inputSize, false)
+
         // convert the bitmap to bytebuffer
-        val byteBuffer = convertBitmapToByteBuffer(scaledBitmap)
-        val result = Array(1) { FloatArray(labelList.size) }
+        val byteBuffer = convertBitmapToByteBuffer(scaledBitmap) // input buffer
+        val result = Array(1) { FloatArray(labelList.size) } // output buffer
+
+        // TODO 7 (Perform inference) - Running inference and accumulating the results, passing the input and
+        //  output buffers as arguments
         interpreter.run(byteBuffer, result)
         return getSortedResult(result)
     }

@@ -3,7 +3,6 @@ STEPS INVOLVED TO PERFORMING INFERENCE (Involved at all of our examples)
 1 - Initialize the interpreter	
 	
 	- model is loaded in the interpreter at this stage
-
 	- A Interpreter encapsulates a pre-trained TensorFLow model, in wich operations are executed
 	for model inference
 
@@ -14,15 +13,14 @@ STEPS INVOLVED TO PERFORMING INFERENCE (Involved at all of our examples)
 3 - Perform inference
 
 	- Pass the input to the interpreter and invoke the interpreter
-
 	- inference is the process of executing a TensorFlow Lite model on-device in order to make predictions based on
 	input data. To perform inferenc, it´s is necessary run it into a Interpreter
 
 4 - Obtain and map the results
 
-	Mapping our resulting confidence value to labels
+	- Mapping our resulting confidence value to labels
 
 
 CATS AND DOGS PROJECT
-  .tfLite - model
-  .txt = model labels
+  assets/converted_model.tfLite => model
+  assets/label.txt => model labels
