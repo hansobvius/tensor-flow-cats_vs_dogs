@@ -15,7 +15,7 @@ import kotlin.math.min
 
 class Classifier(assetManager: AssetManager, modelPath: String, labelPath: String, private val inputSize: Int) {
     private var interpreter: Interpreter
-    private var lableList: List<String>
+    private var labelList: List<String>
     private val pixelSize: Int = 3
     private val imageMean = 0
     private val imageStd = 255.0f
@@ -33,25 +33,34 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
     }
 
     init {
+        // TODO 3 - setting up the interpreter to encapsulate the TF trained model. This options config the state of the
+        // interpreter to be used
         val options = Interpreter.Options()
         options.setNumThreads(5)
         options.setUseNNAPI(true)
+
+        // TODO 4 - Initialize and Loading the model into the interpreter
         interpreter = Interpreter(loadModelFile(assetManager, modelPath), options)
-        lableList = loadLabelList(assetManager, labelPath)
+
+        // TODO 5 - get model labels (.txt)
+        labelList = loadLabelList(assetManager, labelPath)
     }
 
     private fun loadModelFile(assetManager: AssetManager, modelPath: String): MappedByteBuffer {
+        // get the file descriptor of tflite model
         val fileDescriptor = assetManager.openFd(modelPath)
+        // open the input stream
         val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
+        // read the file channels along its offset and lenght as fowwlow
         val fileChannel = inputStream.channel
         val startOffset = fileDescriptor.startOffset
         val declaredLength = fileDescriptor.declaredLength
+        // finally load the TFLite model
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
     }
 
     private fun loadLabelList(assetManager: AssetManager, labelPath: String): List<String> {
         return assetManager.open(labelPath).bufferedReader().useLines { it.toList() }
-
     }
 
     /**
@@ -61,7 +70,7 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
     fun recognizeImage(bitmap: Bitmap): List<Recognition> {
         val scaledBitmap = Bitmap.createScaledBitmap(bitmap, inputSize, inputSize, false)
         val byteBuffer = convertBitmapToByteBuffer(scaledBitmap)
-        val result = Array(1) { FloatArray(lableList.size) }
+        val result = Array(1) { FloatArray(labelList.size) }
         interpreter.run(byteBuffer, result)
         return getSortedResult(result)
     }
@@ -87,7 +96,7 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
     }
 
     private fun getSortedResult(labelProbArray: Array<FloatArray>): List<Recognition> {
-        Log.d("Classifier", "List Size:(%d, %d, %d)".format(labelProbArray.size,labelProbArray[0].size,lableList.size))
+        Log.d("Classifier", "List Size:(%d, %d, %d)".format(labelProbArray.size,labelProbArray[0].size,labelList.size))
 
         val pq = PriorityQueue(
             maxResult,
@@ -96,11 +105,11 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
                 -> confidence1.compareTo(confidence2) * -1
             })
 
-        for (i in lableList.indices) {
+        for (i in labelList.indices) {
             val confidence = labelProbArray[0][i]
             if (confidence >= threshHold) {
                 pq.add(Recognition("" + i,
-                    if (lableList.size > i) lableList[i] else "Unknown", confidence)
+                    if (labelList.size > i) labelList[i] else "Unknown", confidence)
                 )
             }
         }

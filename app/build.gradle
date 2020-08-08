@@ -20,6 +20,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    // TODO 2 - ensure gradle to not compress the models when building the app
     aaptOptions {
         noCompress "tflite"
         noCompress "lite"
@@ -31,7 +33,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
+    // TODO 1 - implement TensorFlow dependency
     implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
+
 //    implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
 //    implementation "io.reactivex.rxjava2:rxkotlin:$versions.rxkotlin"
 //    implementation 'androidx.fragment:fragment:1.0.0'
