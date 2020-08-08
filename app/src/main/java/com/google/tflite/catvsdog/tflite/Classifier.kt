@@ -3,17 +3,18 @@ package com.google.tflite.catvsdog.tflite
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.util.Log
+import com.google.tflite.catvsdog.model.Recognition
+import com.google.tflite.catvsdog.tool.ByteBufferUtil
+import com.google.tflite.catvsdog.tool.AssetsUtil
 import org.tensorflow.lite.Interpreter
-import java.io.FileInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.MappedByteBuffer
-import java.nio.channels.FileChannel
 import java.util.*
 import kotlin.math.min
 
 
 class Classifier(assetManager: AssetManager, modelPath: String, labelPath: String, private val inputSize: Int) {
+
     private var interpreter: Interpreter
     private var labelList: List<String>
     private val pixelSize: Int = 3
@@ -21,16 +22,6 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
     private val imageStd = 255.0f
     private val maxResult = 3
     private val threshHold = 0.4f
-
-    data class Recognition(
-        var id: String = "",
-        var title: String = "",
-        var confidence: Float = 0F
-    )  {
-        override fun toString(): String {
-            return "Title = $title, Confidence = $confidence)"
-        }
-    }
 
     init {
         // TODO 3 (Initialize the Interpreter) - setting up the interpreter to encapsulate the TF trained model.
@@ -40,29 +31,11 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
         options.setUseNNAPI(true)
 
         // TODO 4 (Initialize the Interpreter) - Initialize and Loading the model into the interpreter
-        interpreter = Interpreter(loadModelFile(assetManager, modelPath), options)
+        interpreter = Interpreter(ByteBufferUtil.loadModelFile(assetManager, modelPath), options)
 
         // TODO 5 (Initialize the Interpreter) - get model labels (.txt)
-        labelList = loadLabelList(assetManager, labelPath)
+        labelList = AssetsUtil.load(assetManager, labelPath)
     }
-
-    private fun loadModelFile(assetManager: AssetManager, modelPath: String): MappedByteBuffer {
-        // get the file descriptor of tflite model
-        val fileDescriptor = assetManager.openFd(modelPath)
-        // open the input stream
-        val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
-        // read the file channels along its offset and length as follow
-        val fileChannel = inputStream.channel
-        val startOffset = fileDescriptor.startOffset
-        val declaredLength = fileDescriptor.declaredLength
-        // finally, load the TFLite model
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
-    }
-
-    private fun loadLabelList(assetManager: AssetManager, labelPath: String): List<String> {
-        return assetManager.open(labelPath).bufferedReader().useLines { it.toList() }
-    }
-
 
     /**
      * Returns the result after running the recognition with the help of
@@ -74,7 +47,7 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
         val scaledBitmap = Bitmap.createScaledBitmap(bitmap, inputSize, inputSize, false)
 
         // convert the bitmap to bytebuffer
-        val byteBuffer = convertBitmapToByteBuffer(scaledBitmap) // input buffer
+        val byteBuffer = ByteBufferUtil.convertBitmapToByteBuffer(scaledBitmap, inputSize, pixelSize, imageMean, imageStd) // input buffer
         val result = Array(1) { FloatArray(labelList.size) } // output buffer containing the probabilities of the two classes (cats and dogs)
 
         // TODO 7 (Perform inference) - Running inference and accumulating the results, passing the input and
@@ -84,28 +57,6 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
         // TODO 8 (Obtain and map the results) - All of the results are gathered in a recognition of objetcs,
         //  wich contains information about specific recognition results including its title and confidence
         return getSortedResult(result)
-    }
-
-
-    private fun convertBitmapToByteBuffer(bitmap: Bitmap): ByteBuffer {
-        // batch size is four because we need four bytes for each value since the dataset for inputs and outputs of the exported model is float
-        val byteBuffer = ByteBuffer.allocateDirect(4 * inputSize * inputSize * pixelSize)
-        byteBuffer.order(ByteOrder.nativeOrder())
-        val intValues = IntArray(inputSize * inputSize)
-
-        bitmap.getPixels(intValues, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
-        var pixel = 0
-        // get R-G-B channels of the image
-        for (i in 0 until inputSize) {
-            for (j in 0 until inputSize) {
-                val input = intValues[pixel++]
-
-                byteBuffer.putFloat((((input.shr(16)  and 0xFF) - imageMean) / imageStd))
-                byteBuffer.putFloat((((input.shr(8) and 0xFF) - imageMean) / imageStd))
-                byteBuffer.putFloat((((input and 0xFF) - imageMean) / imageStd))
-            }
-        }
-        return byteBuffer
     }
 
     private fun getSortedResult(labelProbArray: Array<FloatArray>): List<Recognition> {
@@ -137,5 +88,4 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
         }
         return recognitions
     }
-
 }
