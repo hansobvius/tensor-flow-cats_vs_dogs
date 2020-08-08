@@ -33,16 +33,16 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
     }
 
     init {
-        // TODO 3 - setting up the interpreter to encapsulate the TF trained model. This options config the state of the
-        // interpreter to be used
+        // TODO 3 (Initialize the Interpreter) - setting up the interpreter to encapsulate the TF trained model.
+        //  This options config the state of the interpreter to be used
         val options = Interpreter.Options()
         options.setNumThreads(5)
         options.setUseNNAPI(true)
 
-        // TODO 4 - Initialize and Loading the model into the interpreter
+        // TODO 4 (Initialize the Interpreter) - Initialize and Loading the model into the interpreter
         interpreter = Interpreter(loadModelFile(assetManager, modelPath), options)
 
-        // TODO 5 - get model labels (.txt)
+        // TODO 5 (Initialize the Interpreter) - get model labels (.txt)
         labelList = loadLabelList(assetManager, labelPath)
     }
 
@@ -51,11 +51,11 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
         val fileDescriptor = assetManager.openFd(modelPath)
         // open the input stream
         val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
-        // read the file channels along its offset and lenght as fowwlow
+        // read the file channels along its offset and length as follow
         val fileChannel = inputStream.channel
         val startOffset = fileDescriptor.startOffset
         val declaredLength = fileDescriptor.declaredLength
-        // finally load the TFLite model
+        // finally, load the TFLite model
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
     }
 
@@ -63,12 +63,16 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
         return assetManager.open(labelPath).bufferedReader().useLines { it.toList() }
     }
 
+
     /**
-     * Returns the result after running the recognition with the help of interpreter
-     * on the passed bitmap
+     * Returns the result after running the recognition with the help of
+     * interpreter on the passed bitmap
      */
+    // TODO 6 (preparing the image output) - Rescaling and allocating a buffer.
     fun recognizeImage(bitmap: Bitmap): List<Recognition> {
+        // resize the bitmap to 224 x 224
         val scaledBitmap = Bitmap.createScaledBitmap(bitmap, inputSize, inputSize, false)
+        // convert the bitmap to bytebuffer
         val byteBuffer = convertBitmapToByteBuffer(scaledBitmap)
         val result = Array(1) { FloatArray(labelList.size) }
         interpreter.run(byteBuffer, result)
@@ -77,12 +81,14 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
 
 
     private fun convertBitmapToByteBuffer(bitmap: Bitmap): ByteBuffer {
+        // batch size is four because we need four bytes for each value since the dataset for inputs and outputs of the exported model is float
         val byteBuffer = ByteBuffer.allocateDirect(4 * inputSize * inputSize * pixelSize)
         byteBuffer.order(ByteOrder.nativeOrder())
         val intValues = IntArray(inputSize * inputSize)
 
         bitmap.getPixels(intValues, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
         var pixel = 0
+        // get R-G-B channels of the image
         for (i in 0 until inputSize) {
             for (j in 0 until inputSize) {
                 val input = intValues[pixel++]
