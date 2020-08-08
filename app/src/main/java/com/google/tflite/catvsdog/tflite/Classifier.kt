@@ -75,11 +75,14 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
 
         // convert the bitmap to bytebuffer
         val byteBuffer = convertBitmapToByteBuffer(scaledBitmap) // input buffer
-        val result = Array(1) { FloatArray(labelList.size) } // output buffer
+        val result = Array(1) { FloatArray(labelList.size) } // output buffer containing the probabilities of the two classes (cats and dogs)
 
         // TODO 7 (Perform inference) - Running inference and accumulating the results, passing the input and
         //  output buffers as arguments
         interpreter.run(byteBuffer, result)
+
+        // TODO 8 (Obtain and map the results) - All of the results are gathered in a recognition of objetcs,
+        //  wich contains information about specific recognition results including its title and confidence
         return getSortedResult(result)
     }
 
@@ -108,6 +111,7 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
     private fun getSortedResult(labelProbArray: Array<FloatArray>): List<Recognition> {
         Log.d("Classifier", "List Size:(%d, %d, %d)".format(labelProbArray.size,labelProbArray[0].size,labelList.size))
 
+        // The size of de queue indicates the maximum number of results to be shown
         val pq = PriorityQueue(
             maxResult,
             Comparator<Recognition> {
@@ -115,6 +119,7 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
                 -> confidence1.compareTo(confidence2) * -1
             })
 
+        // only consider results that have a confidence of 0.5 or greater
         for (i in labelList.indices) {
             val confidence = labelProbArray[0][i]
             if (confidence >= threshHold) {
