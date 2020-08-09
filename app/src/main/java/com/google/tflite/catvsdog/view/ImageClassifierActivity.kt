@@ -13,7 +13,7 @@ import com.google.tflite.catvsdog.tflite.Classifier
 
 class ImageClassifierActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityImageClassifierBinding
+    private lateinit var binding: ActivityImageClassifierBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -13,7 +13,7 @@ import com.google.tflite.catvsdog.tflite.Classifier
 
 class ContainerFragment: Fragment(), View.OnClickListener {
 
-    lateinit var binding: FragmentContainerBinding
+    private lateinit var binding: FragmentContainerBinding
 
     private lateinit var classifier: Classifier
 
@@ -56,6 +56,8 @@ class ContainerFragment: Fragment(), View.OnClickListener {
 
         val result = classifier.recognizeImage(bitmap)
 
-        Toast.makeText(this.requireContext(), result[0].title, Toast.LENGTH_SHORT).show()
+        this.requireActivity().runOnUiThread {
+            Toast.makeText(this.requireContext(), result[0].title, Toast.LENGTH_SHORT).show()
+        }
     }
 }

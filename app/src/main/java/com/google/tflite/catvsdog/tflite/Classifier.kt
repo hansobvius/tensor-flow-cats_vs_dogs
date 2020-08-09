@@ -54,8 +54,8 @@ class Classifier(assetManager: AssetManager, modelPath: String, labelPath: Strin
         //  output buffers as arguments
         interpreter.run(byteBuffer, result)
 
-        // TODO 8 (Obtain and map the results) - All of the results are gathered in a recognition of objetcs,
-        //  wich contains information about specific recognition results including its title and confidence
+        // TODO 8 (Obtain and map the results) - All of the results are gathered in a recognition of objects,
+        //  which contains information about specific recognition results including its title and confidence
         return getSortedResult(result)
     }
 
