@@ -6,6 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.tflite.catvsdog.R
@@ -25,9 +26,12 @@ class ImageClassifierActivity : AppCompatActivity() {
         binding.apply{
             navController = findNavController(R.id.nav_host_fragment)
             navController.let{
-                this.navigationView.setupWithNavController(it)
+                NavigationUI.setupActionBarWithNavController(this@ImageClassifierActivity, it, this.drawer)
+                NavigationUI.setupWithNavController(this.navigationView, it)
                 appBarConfiguration = AppBarConfiguration(navController.graph, this.drawer)
             }
         }
     }
+
+    override fun onSupportNavigateUp(): Boolean = NavigationUI.navigateUp(navController, appBarConfiguration)
 }
