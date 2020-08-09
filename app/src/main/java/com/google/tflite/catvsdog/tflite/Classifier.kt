@@ -4,11 +4,9 @@ import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.util.Log
 import com.google.tflite.catvsdog.model.Recognition
-import com.google.tflite.catvsdog.tool.ByteBufferUtil
 import com.google.tflite.catvsdog.tool.AssetsUtil
+import com.google.tflite.catvsdog.tool.ByteBufferUtil
 import org.tensorflow.lite.Interpreter
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import java.util.*
 import kotlin.math.min
 

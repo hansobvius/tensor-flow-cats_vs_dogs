@@ -25,6 +25,9 @@ android {
         noCompress "tflite"
         noCompress "lite"
     }
+    kotlinOptions{
+        jvmTarget = '1.8'
+    }
 
     dataBinding{
         enabled = true
