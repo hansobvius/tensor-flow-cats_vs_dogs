@@ -3,5 +3,5 @@
     <item
         android:id="@+id/containerFragment"
         android:icon="@drawable/android"
-        android:title="Cats and Dogs" />
+        android:title="@string/menu_item" />
 </menu>
