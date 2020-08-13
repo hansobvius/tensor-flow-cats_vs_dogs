@@ -5,6 +5,6 @@
 
     <fragment
         android:id="@+id/containerFragment"
-        android:name="com.google.tflite.catvsdog.view.ContainerFragment"
+        android:name="com.google.tflite.catvsdog.view.fragment.ContainerFragment"
         android:label="ContainerFragment" />
 </navigation>

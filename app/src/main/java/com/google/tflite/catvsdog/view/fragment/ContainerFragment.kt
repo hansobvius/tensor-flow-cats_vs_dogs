@@ -1,4 +1,4 @@
-package com.google.tflite.catvsdog.view
+package com.google.tflite.catvsdog.view.fragment
 
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
