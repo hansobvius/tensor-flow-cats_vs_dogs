@@ -6,5 +6,5 @@
     <fragment
         android:id="@+id/containerFragment"
         android:name="com.google.tflite.catvsdog.view.fragment.ContainerFragment"
-        android:label="ContainerFragment" />
+        android:label="@string/app_name"/>
 </navigation>
