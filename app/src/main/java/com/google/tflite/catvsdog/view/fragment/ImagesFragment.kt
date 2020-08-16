@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.tflite.catvsdog.AppApplication
 import com.google.tflite.catvsdog.R
+import com.google.tflite.catvsdog.adapter.images.ImageAdapter
 import com.google.tflite.catvsdog.databinding.FragmentImagesBinding
 import com.google.tflite.catvsdog.tflite.Classifier
 import com.google.tflite.catvsdog.viewmodel.ImageViewModel
@@ -20,6 +21,7 @@ class ImagesFragment: Fragment(), View.OnClickListener {
 
     private lateinit var binding: FragmentImagesBinding
     private lateinit var imageViewModel: ImageViewModel
+    private lateinit var imageAdapter: ImageAdapter
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
