@@ -13,4 +13,8 @@ class ImageViewModel: ViewModel() {
     fun setBitmap(bitmap: Bitmap){
         _imageBitmap.value = bitmap
     }
+
+    fun resetBitmap(){
+        _imageBitmap.value = null
+    }
 }

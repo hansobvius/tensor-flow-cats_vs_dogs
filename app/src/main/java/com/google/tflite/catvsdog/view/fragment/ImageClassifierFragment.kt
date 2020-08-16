@@ -52,12 +52,17 @@ class ImageClassifierFragment: Fragment() {
         })
     }
 
+    override fun onDestroy(){
+        super.onDestroy()
+        imageViewModel.resetBitmap()
+    }
+
     private fun initImageView(bitmap: Bitmap){
         binding.imageClassifier.setImageBitmap(bitmap)
     }
 
     private fun initImageClassifier(imageBitmap: Bitmap) {
-        val result = classifier!!.recognizeImage(imageBitmap)
+        val result = classifier.recognizeImage(imageBitmap)
         this.requireActivity().runOnUiThread {
             Toast.makeText(this.requireContext(), result[0].title, Toast.LENGTH_SHORT).show()
         }
