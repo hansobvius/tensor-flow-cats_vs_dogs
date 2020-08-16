@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/app_navigation"
-    app:startDestination="@id/containerFragment">
+    app:startDestination="@id/imagesFragment">
 
     <fragment
-        android:id="@+id/containerFragment"
-        android:name="com.google.tflite.catvsdog.view.fragment.ContainerFragment"
-        android:label="@string/app_name"/>
+        android:id="@+id/imagesFragment"
+        android:name="com.google.tflite.catvsdog.view.fragment.ImagesFragment"
+        android:label="@string/app_name">
+        <action
+            android:id="@+id/action_imagesFragment_to_imageClassifierFragment"
+            app:destination="@id/imageClassifierFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/imageClassifierFragment"
+        android:name="com.google.tflite.catvsdog.view.fragment.ImageClassifierFragment"
+        android:label="@string/app_name" >
+        <action
+            android:id="@+id/action_imageClassifierFragment_to_imagesFragment"
+            app:destination="@id/imagesFragment" />
+    </fragment>
 </navigation>

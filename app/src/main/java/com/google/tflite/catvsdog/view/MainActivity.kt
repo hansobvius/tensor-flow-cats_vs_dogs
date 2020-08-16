@@ -12,7 +12,7 @@ import com.google.tflite.catvsdog.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
 
@@ -31,5 +31,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume(){
+        super.onResume()
+        this@MainActivity.apply{
+            this.navigateDrawerListener()
+        }
+    }
+
     override fun onSupportNavigateUp(): Boolean = NavigationUI.navigateUp(navController, appBarConfiguration)
+
+    private fun navigateDrawerListener(){
+        binding.navigationView.setNavigationItemSelectedListener {
+            when(it.itemId){
+                R.id.imagesFragment -> {}
+            }
+            true
+        }
+    }
 }
