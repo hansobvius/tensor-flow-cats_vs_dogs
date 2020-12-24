@@ -16,7 +16,7 @@ abstract class BaseAdapter<O, D>:
 
     private fun _BaseAdapter(){ objectList = mutableListOf() }
 
-    abstract var adapterCallback: ((view: D, position: Int, list: MutableList<O>?) -> Unit)?
+    abstract val adapterCallback: ((view: D, position: Int, list: MutableList<O>?) -> Unit)?
 
     abstract fun viewContainer(): Int?
 
